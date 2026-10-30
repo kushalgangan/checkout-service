@@ -40,12 +40,10 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 64Mi
+              memory: 32Mi
             limits:
               cpu: 500m
-              # The ~50 MB footprint plus page cache and kernel memory fits
-              # under 64Mi. Drop to 32Mi to reproduce an OOMKilled crash loop.
-              memory: 64Mi
+              memory: 32Mi
           readinessProbe:
             httpGet:
               path: /readyz
