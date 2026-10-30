@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: checkout
+
+labels:
+  - pairs:
+      app.kubernetes.io/name: checkout-service
+      app.kubernetes.io/part-of: aiops-demo
+    includeSelectors: false
+
+resources:
+  - k8s/namespace.yaml
+  - k8s/deployment.yaml
+  - k8s/service.yaml
+
+# The service code ships as a ConfigMap built from app/main.py -- no Dockerfile.
+# The name gets a content hash suffix, so editing main.py rolls the Deployment.
+configMapGenerator:
+  - name: checkout-service-code
+    files:
+      - main.py=app/main.py
