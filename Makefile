@@ -6,7 +6,7 @@ SHELL := /bin/bash
 NAMESPACE    ?= checkout
 DEPLOYMENT   ?= checkout-service
 KUBE_CONTEXT ?= colima
-OOM_LIMIT    ?= 128Mi
+OOM_LIMIT    ?= 32Mi
 
 KUBECTL := kubectl --context $(KUBE_CONTEXT)
 
@@ -18,7 +18,7 @@ help: ## Show this help.
 	      /^[a-zA-Z0-9_-]+:.*##/ { printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
 .PHONY: deploy
-deploy: ## Apply namespace, ConfigMap, Deployment, Service (healthy 320Mi limit).
+deploy: ## Apply namespace, ConfigMap, Deployment, Service (healthy 64Mi limit).
 	$(KUBECTL) apply -k .
 	$(KUBECTL) -n $(NAMESPACE) rollout status deploy/$(DEPLOYMENT) --timeout=120s
 

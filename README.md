@@ -1,7 +1,7 @@
 # checkout-service
 
 A small Python checkout API used to demo memory-pressure incidents (OOMKilled) on
-Kubernetes. On startup it grows to **~250 MB resident memory** to simulate a
+Kubernetes. On startup it grows to **~50 MB resident memory** to simulate a
 warm product cache.
 
 - **No Dockerfile.** It runs on the public `python:3.12-slim` image. `app/main.py` is
@@ -32,19 +32,19 @@ checkout-service/
 
 | Setting              | Value  | Why                                                      |
 |----------------------|--------|----------------------------------------------------------|
-| `TARGET_MEMORY_MI`   | 240    | Process RSS target (~250 MB)                             |
-| requests.memory      | 256Mi  | Matches the steady-state cgroup usage (~241–256Mi)       |
-| limits.memory        | 320Mi  | Headroom. A 256Mi limit gets OOMKilled too               |
+| `TARGET_MEMORY_MI`   | 48     | Process RSS target (~50 MB)                              |
+| requests.memory      | 64Mi   | Steady-state cgroup usage is ~56Mi                       |
+| limits.memory        | 64Mi   | Equal to the request                                     |
 | requests/limits.cpu  | 100m / 500m |                                                     |
 
-The cgroup counts page cache and kernel memory on top of the Python RSS. A
-~250 MB process therefore needs a limit somewhat above 256Mi.
+The cgroup counts page cache and kernel memory on top of the Python RSS, and
+warm-up grows in 8Mi steps, so usage settles a little above the RSS target.
 
 ## Usage (local colima cluster)
 
 ```sh
-make deploy        # healthy: 1/1 Running, ~241Mi used of 320Mi
-make oom           # limit -> 128Mi: OOMKilled (exit 137), CrashLoopBackOff
+make deploy        # healthy: 1/1 Running, ~56Mi used of 64Mi
+make oom           # limit -> 32Mi: OOMKilled (exit 137), CrashLoopBackOff
 make status        # restarts + last termination reason
 make restore       # back to the healthy limit
 make delete        # tear down

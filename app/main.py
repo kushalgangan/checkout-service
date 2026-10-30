@@ -4,8 +4,8 @@ Stdlib only, so it runs on the public python image with no Dockerfile or pip
 install. Kubernetes mounts this file from a ConfigMap and runs it directly.
 
 On startup the service grows its resident memory to TARGET_MEMORY_MI (default
-240 MiB, ~250 MB) to simulate a heavy in-memory cache. With a memory limit
-below that (e.g. 128Mi) the kernel OOM-kills the container during warm-up.
+48 MiB, ~50 MB) to simulate an in-memory cache. With a memory limit below
+that (e.g. 32Mi) the kernel OOM-kills the container during warm-up.
 """
 
 import json
@@ -19,7 +19,7 @@ import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = int(os.environ.get("PORT", "8080"))
-TARGET_MEMORY_MI = int(os.environ.get("TARGET_MEMORY_MI", "240"))
+TARGET_MEMORY_MI = int(os.environ.get("TARGET_MEMORY_MI", "48"))
 CHUNK_MI = 8
 MI = 1024 * 1024
 

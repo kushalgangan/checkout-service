@@ -29,9 +29,9 @@ spec:
           env:
             - name: PORT
               value: "8080"
-            # Resident memory the service grows to at startup (~250 MB).
+            # Resident memory the service grows to at startup (~50 MB).
             - name: TARGET_MEMORY_MI
-              value: "240"
+              value: "48"
             - name: PYTHONDONTWRITEBYTECODE
               value: "1"
           ports:
@@ -40,14 +40,12 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 64Mi
             limits:
               cpu: 500m
-              # The ~250 MB footprint shows up as ~256Mi in the cgroup (RSS +
-              # page cache + kernel), so a 256Mi limit gets OOMKilled too.
-              # 320Mi leaves headroom. Drop to 128Mi to reproduce an
-              # OOMKilled crash loop.
-              memory: 320Mi
+              # The ~50 MB footprint plus page cache and kernel memory fits
+              # under 64Mi. Drop to 32Mi to reproduce an OOMKilled crash loop.
+              memory: 64Mi
           readinessProbe:
             httpGet:
               path: /readyz
