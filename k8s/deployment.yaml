@@ -40,10 +40,14 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 32Mi
+              memory: 96Mi
             limits:
               cpu: 500m
-              memory: 32Mi
+              # RCA follow-up (incident-checkout-20261030): the app warms to
+              # TARGET_MEMORY_MI (48Mi) and reaches ~57Mi RSS with Python overhead.
+              # 32Mi OOMKilled every pod; 64Mi left <10% headroom and was also
+              # OOMKilled. Keep the limit >= 2x TARGET_MEMORY_MI.
+              memory: 128Mi
           readinessProbe:
             httpGet:
               path: /readyz
